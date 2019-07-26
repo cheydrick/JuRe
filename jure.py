@@ -4,6 +4,8 @@ from views.choose_source_dest import ChooseSourceDestDirView
 from data.jure_data import JuReData
 
 if __name__ == '__main__':
+    # Instance of JureData, which contains data and functions that the views will
+    # need.
     jure_data = JuReData()
     
     # First present UI for choosing source and destination folder.

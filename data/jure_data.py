@@ -35,6 +35,10 @@ class JuReData():
         # Thumbnail options
         self.thumbnail_size = 128, 128
 
+        # JureImage list progress variables
+        self.num_images = 0
+        self.num_jure_images_processed = 0
+
     def set_source_folder(self, source_folder):
         # Add code to validate path
         self.source_folder = source_folder
@@ -55,6 +59,8 @@ class JuReData():
             if isfile(join(self.source_folder, f)):
                 # TODO: Validate that these are image files!!
                 self.image_file_paths_list.append(join(self.source_folder, f))
+        
+        self.num_images = len(self.image_file_paths_list)
 
     def _load_jure_image_list(self):
         '''
