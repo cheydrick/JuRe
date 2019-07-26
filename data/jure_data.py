@@ -42,6 +42,7 @@ class JuReData():
     def set_source_folder(self, source_folder):
         # Add code to validate path
         self.source_folder = source_folder
+        self._load_image_file_paths_list()
 
     def set_destination_folder(self, destination_folder):
         # Add code to validate path
@@ -73,9 +74,15 @@ class JuReData():
 
     def _load_next_jure_image(self):
         '''
-        Placeholder for an idea.
+        This function instances a JuReImage of the next unprocessed file,
+        and returns how many files total have been processed. This allows for informing
+        a progress bar how much work has been done without resorting to threading.
         '''
-        pass
+        index = self.num_jure_images_processed
+        self.jure_image_list.append(JuReImage(self.image_file_paths_list[index], self.thumbnail_size))
+        if self.num_jure_images_processed < self.num_images - 1:
+            self.num_jure_images_processed += 1
+        return self.num_jure_images_processed
 
 if __name__ == '__main__':
     '''
