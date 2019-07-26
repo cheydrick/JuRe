@@ -12,6 +12,7 @@ class ChooseSourceDestDirView(Frame):
     '''
     def __init__(self, root, set_source_folder_callback = None, set_destination_folder_callback = None):
         super().__init__()
+        self.root = root
         self.set_source_folder_callback = set_source_folder_callback
         self.set_destination_folder_callback = set_destination_folder_callback
         self.init_view()
@@ -42,5 +43,6 @@ if __name__ == '__main__':
         print(folder_path)
     
     root = Tk()
+    root.title('JuRe - Just Resize!')
     choose_source_dest = ChooseSourceDestDirView(root, folder_path_print, folder_path_print)
     root.mainloop()
