@@ -18,7 +18,7 @@ class ChooseSourceDestDirView(Frame):
 
     def init_view(self):
         self.choose_source_folder_button = Button(self, text = 'Choose Original Image Source Folder', command = self.set_source_folder)
-        self.choose_destination_folder_button = Button(self, text = 'Choose Resize Image Destination Folder', command = self.set_destination_folder)
+        self.choose_destination_folder_button = Button(self, text = 'Choose Resized Image Destination Folder', command = self.set_destination_folder)
 
         self.choose_source_folder_button.pack()
         self.choose_destination_folder_button.pack()

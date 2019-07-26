@@ -1,6 +1,4 @@
-from tkinter import Tk
 from PIL import Image
-from views.choose_source_dest import ChooseSourceDestDirView
 
 class JuReImage():
     '''
@@ -13,6 +11,10 @@ class JuReImage():
         self.resize_flag = False
         self.image_thumbnail = None
         pass
+
+    def _create_thumbnail_from_file_path(self):
+        self.image_thumbnail = Image.open(self.image_file_path)
+        
 
 class JuReData():
     def __init__(self):
@@ -37,11 +39,3 @@ class JuReData():
         Must be 2-tuple of pixels, such as (128, 128).
         '''
         self.thumbnail_size = size
-
-if __name__ == '__main__':
-    jure_data = JuReData()
-    
-    # First present UI for choosing source and destination folder.
-    root = Tk()
-    choose_source_dest_view = ChooseSourceDestDirView(root, jure_data.set_source_folder, jure_data.set_destination_folder)
-    root.mainloop()
