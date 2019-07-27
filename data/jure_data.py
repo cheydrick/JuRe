@@ -1,6 +1,6 @@
 from PIL import Image
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, splitext
 
 class JuReImage():
     '''
@@ -8,16 +8,29 @@ class JuReImage():
     for one image, along with other flags, such as whether or not
     the image is flagged for resizing.
     '''
-    def __init__(self, image_file_path, thumbnail_size):
+    def __init__(self, image_file_path, thumbnail_size, destination_folder, create_thumbnail = False, resize_percentage = 25):
         self.image_file_path = image_file_path
         self.thumbnail_size = thumbnail_size
         self.resize_flag = False
         self.image_thumbnail = None
+        self.create_thumbnail = create_thumbnail
+        self.resize_percentage = resize_percentage
+        self.destination_folder = destination_folder
 
-        self._create_thumbnail_from_file_path()
+        if self.create_thumbnail:
+            self._create_thumbnail_from_file_path()
 
     def _create_thumbnail_from_file_path(self):
         self.image_thumbnail = Image.open(self.image_file_path).thumbnail(self.thumbnail_size)
+
+    def resize(self):
+        tmp_image = Image.open(self.image_file_path)
+        new_width = int(tmp_image.width * (1 / self.resize_percentage))
+        new_height = int(tmp_image.height * (1 / self.resize_percentage))
+        tmp_image.resize((new_width, new_height))
+        file_name, ext = splitext(self.image_file_path)
+        resize_file_path = file_name + '_resized.jpg'
+        tmp_image.save(resize_file_path)
         
 
 class JuReData():
@@ -80,7 +93,7 @@ class JuReData():
         yields to the caller, so that I can implement a progress bar in the view.
         '''
         for p in self.image_file_paths_list:
-            self.jure_image_list.append(JuReImage(p, self.thumbnail_size))
+            self.jure_image_list.append(JuReImage(p, self.thumbnail_size, self.destination_folder))
 
     def _load_next_jure_image(self):
         '''
@@ -89,7 +102,7 @@ class JuReData():
         a progress bar how much work has been done without resorting to threading.
         '''
         index = self.num_jure_images_processed
-        self.jure_image_list.append(JuReImage(self.image_file_paths_list[index], self.thumbnail_size))
+        self.jure_image_list.append(JuReImage(self.image_file_paths_list[index], self.thumbnail_size, self.destination_folder))
         if self.num_jure_images_processed < self.num_images - 1:
             self.num_jure_images_processed += 1
         return self.num_jure_images_processed
@@ -103,13 +116,13 @@ if __name__ == '__main__':
     jure_data = JuReData()
 
     source_folder = filedialog.askdirectory()
+    destination_folder = filedialog.askdirectory()
 
     jure_data.set_source_folder(source_folder)
+    jure_data.set_destination_folder(destination_folder)
     jure_data._load_image_file_paths_list()
     jure_data._load_jure_image_list()
 
-    for p in jure_data.image_file_paths_list:
-        print(p)
-        
-    for i in jure_data.jure_image_list:
-        print(i)
+    for r in jure_data.jure_image_list:
+        print(r.image_file_path)
+        r.resize()
