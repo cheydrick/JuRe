@@ -24,6 +24,27 @@ class LoadSourceImagesProgressView(Frame):
     def start_timer(self):
         self.on_timer()
 
+class ResizeImagesProgressView(Frame):
+    def __init__(self, root, max):
+        super().__init__()
+        self.root = root
+        self.progress_bar = Progressbar(self, orient = "horizontal", length = 200, mode = "determinate")
+        self.progress_bar['maximum'] = max
+        
+        # Override this function. It should be a function that returns
+        # a value from 0-100.
+        self.on_timer_function = lambda: len([])
+
+        self.progress_bar.pack()
+        self.pack()
+
+    def on_timer(self):
+        value = self.on_timer_function()
+        self.progress_bar['value'] = value
+        self.after(1, self.on_timer)
+
+    def start_timer(self):
+        self.on_timer()
 
 if __name__ == '__main__':
     '''

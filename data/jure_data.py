@@ -51,6 +51,7 @@ class JuReData():
         # JureImage list progress variables
         self.num_images = 0
         self.num_jure_images_processed = 0
+        self.num_jure_images_resized = 0
 
         # Flag for whether or not to go to the image chooser
         self.continue_selected = False
@@ -106,6 +107,17 @@ class JuReData():
         if self.num_jure_images_processed < self.num_images - 1:
             self.num_jure_images_processed += 1
         return self.num_jure_images_processed
+
+    def _resize_jure_image_list(self):
+        for p in self.jure_image_list:
+            p.resize()
+
+    def _resize_next_jure_image(self):
+        index = self.num_jure_images_processed
+        self.jure_image_list[index].resize()
+        if self.num_jure_images_resized < self.num_images - 1:
+            self.num_jure_images_resized += 1
+        return self.num_jure_images_resized
 
 if __name__ == '__main__':
     '''
