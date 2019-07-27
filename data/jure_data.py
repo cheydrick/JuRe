@@ -39,6 +39,10 @@ class JuReData():
         self.num_images = 0
         self.num_jure_images_processed = 0
 
+        # Flag for whether or not to go to the image chooser
+        self.continue_selected = False
+        self.resize_all_selected = False
+
     def set_source_folder(self, source_folder):
         # Add code to validate path
         self.source_folder = source_folder
@@ -54,6 +58,12 @@ class JuReData():
         Must be 2-tuple of pixels, such as (128, 128).
         '''
         self.thumbnail_size = size
+
+    def set_continue_selected(self, val = True):
+        self.continue_selected = val
+
+    def set_resize_all_selected(self, val = True):
+        self.resize_all_selected = val
 
     def _load_image_file_paths_list(self):
         for f in listdir(self.source_folder):

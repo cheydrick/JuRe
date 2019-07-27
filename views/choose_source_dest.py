@@ -10,21 +10,24 @@ class ChooseSourceDestDirView(Frame):
         set_source_folder_callback - function that takes a folder path as an argument
         set_destination_folder_callback - function that takes a folder path as an argument
     '''
-    def __init__(self, root, set_source_folder_callback = None, set_destination_folder_callback = None, continue_button_callback = None):
+    def __init__(self, root, set_source_folder_callback = None, set_destination_folder_callback = None, resize_all_button_callback = None, continue_button_callback = None):
         super().__init__()
         self.root = root
         self.set_source_folder_callback = set_source_folder_callback
         self.set_destination_folder_callback = set_destination_folder_callback
+        self.resize_all_button_callback = resize_all_button_callback
         self.continue_button_callback = continue_button_callback
         self.init_view()
 
     def init_view(self):
         self.choose_source_folder_button = Button(self, text = 'Choose Original Image Source Folder', command = self.set_source_folder)
         self.choose_destination_folder_button = Button(self, text = 'Choose Resized Image Destination Folder', command = self.set_destination_folder)
+        self.resize_all_button = Button(self, text = "Resize All", command = self.resize_all_button_clicked)
         self.continue_button = Button(self, text = "Continue", command = self.continue_button_clicked)
-
+        
         self.choose_source_folder_button.pack()
         self.choose_destination_folder_button.pack()
+        self.resize_all_button.pack()
         self.continue_button.pack()
         self.pack()
 
@@ -41,6 +44,12 @@ class ChooseSourceDestDirView(Frame):
     def continue_button_clicked(self):
         if self.continue_button_callback != None:
             self.continue_button_callback()
+
+        self.root.quit()
+
+    def resize_all_button_clicked(self):
+        if self.resize_all_button_callback != None:
+            self.resize_all_button_callback()
 
         self.root.quit()
 

@@ -44,7 +44,7 @@ if __name__ == '__main__':
             
     root = Tk()
     v = Val()
-    load_progress_view = LoadSourceImagesProgressView(root, )
+    load_progress_view = LoadSourceImagesProgressView(root, 100)
     load_progress_view.on_timer_function = v.create_val
     load_progress_view.start_timer()
 
