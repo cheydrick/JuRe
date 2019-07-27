@@ -1,5 +1,4 @@
 from tkinter import Tk
-from PIL import Image
 from views.choose_source_dest import ChooseSourceDestDirView
 from views.progress_bar import LoadSourceImagesProgressView
 from data.jure_data import JuReData
