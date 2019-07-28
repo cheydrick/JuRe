@@ -20,16 +20,19 @@ class JuReImage():
         if self.create_thumbnail:
             self._create_thumbnail_from_file_path()
 
+        print("Created JureImage {}".format(self.image_file_path))
+
     def _create_thumbnail_from_file_path(self):
         self.image_thumbnail = Image.open(self.image_file_path).thumbnail(self.thumbnail_size)
 
     def resize(self):
         tmp_image = Image.open(self.image_file_path)
-        new_width = int(tmp_image.width * (1 / self.resize_percentage))
-        new_height = int(tmp_image.height * (1 / self.resize_percentage))
+        new_width = int(tmp_image.width * (self.resize_percentage / 100))
+        new_height = int(tmp_image.height * (self.resize_percentage / 100))
         tmp_image.resize((new_width, new_height))
         file_name, ext = splitext(self.image_file_path)
         resize_file_path = file_name + '_resized.jpg'
+        print("Resizing: {} to {} at {} percent ({},{} to {},{}).".format(self.image_file_path, resize_file_path, self.resize_percentage, tmp_image.width, tmp_image.height, new_width, new_height))
         tmp_image.save(resize_file_path)
         
 
@@ -79,6 +82,10 @@ class JuReData():
     def set_resize_all_selected(self, val = True):
         self.resize_all_selected = val
 
+    def set_resize_percentage(self, percentage):
+        for i in self.jure_image_list:
+            i.resize_percentage = percentage
+
     def _load_image_file_paths_list(self):
         for f in listdir(self.source_folder):
             if isfile(join(self.source_folder, f)):
@@ -113,7 +120,7 @@ class JuReData():
             p.resize()
 
     def _resize_next_jure_image(self):
-        index = self.num_jure_images_processed
+        index = self.num_jure_images_resized
         self.jure_image_list[index].resize()
         if self.num_jure_images_resized < self.num_images - 1:
             self.num_jure_images_resized += 1

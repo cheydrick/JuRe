@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Button, Label, filedialog
+from tkinter import Tk, Frame, Button, Label, filedialog, IntVar, StringVar, Entry
 
 class ChooseSourceDestDirView(Frame):
     '''
@@ -10,13 +10,14 @@ class ChooseSourceDestDirView(Frame):
         set_source_folder_callback - function that takes a folder path as an argument
         set_destination_folder_callback - function that takes a folder path as an argument
     '''
-    def __init__(self, root, set_source_folder_callback = None, set_destination_folder_callback = None, resize_all_button_callback = None, continue_button_callback = None):
+    def __init__(self, root, set_source_folder_callback = None, set_destination_folder_callback = None, resize_all_button_callback = None, continue_button_callback = None, default_resize_percentage = 25):
         super().__init__()
         self.root = root
         self.set_source_folder_callback = set_source_folder_callback
         self.set_destination_folder_callback = set_destination_folder_callback
         self.resize_all_button_callback = resize_all_button_callback
         self.continue_button_callback = continue_button_callback
+        self.default_resize_percentage = default_resize_percentage
         self.init_view()
 
     def init_view(self):
@@ -24,9 +25,14 @@ class ChooseSourceDestDirView(Frame):
         self.choose_destination_folder_button = Button(self, text = 'Choose Resized Image Destination Folder', command = self.set_destination_folder)
         self.resize_all_button = Button(self, text = "Resize All", command = self.resize_all_button_clicked)
         self.continue_button = Button(self, text = "Continue", command = self.continue_button_clicked)
+
+        self.resize_percent_entry_var = StringVar()
+        self.resize_percent_entry_var.set(str(self.default_resize_percentage))
+        self.resize_percentage_entry = Entry(self, textvariable = self.resize_percent_entry_var)
         
         self.choose_source_folder_button.pack()
         self.choose_destination_folder_button.pack()
+        self.resize_percentage_entry.pack()
         self.resize_all_button.pack()
         self.continue_button.pack()
         self.pack()
@@ -40,6 +46,9 @@ class ChooseSourceDestDirView(Frame):
         destination_folder = filedialog.askdirectory()
         if self.set_destination_folder_callback != None:
             self.set_destination_folder_callback(destination_folder)
+
+    def get_resize_percentage(self):
+        return int(self.resize_percent_entry_var.get())
 
     def continue_button_clicked(self):
         if self.continue_button_callback != None:

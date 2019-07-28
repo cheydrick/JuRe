@@ -24,6 +24,7 @@ if __name__ == '__main__':
     if jure_data.resize_all_selected:
         jure_data._load_image_file_paths_list()
         jure_data._load_jure_image_list()
+        jure_data.set_resize_percentage(choose_source_dest_view.get_resize_percentage())
         progress_view = ResizeImagesProgressView(root, jure_data.num_images)
         progress_view.on_timer_function = jure_data._resize_next_jure_image
         progress_view.start_timer()
