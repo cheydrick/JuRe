@@ -41,11 +41,10 @@ class JuReImage():
 class JuReData():
     def __init__(self):
         # Folders
-        self.source_folder = None
-        self.destination_folder = None
+        self.source_path = None
+        self.destination_path = None
 
-        # File lists
-        self.image_file_paths_list = []
+        self.file_names_list = []
 
         # JureImage class instance list
         self.jure_image_list = []
@@ -53,23 +52,27 @@ class JuReData():
         # Thumbnail options
         self.thumbnail_size = 128, 128
 
-        # JureImage list progress variables
-        self.num_images = 0
+        self.resize_percentage = 25
+
+        self.num_file_names = 0
+        # Total number of JureImage instances in jure_image_list
+        self.num_jure_images = 0
+        # Number of JureImage instances created (for progress bar)
         self.num_jure_images_processed = 0
+        # Number of JureImage instances resized (for progress bar)
         self.num_jure_images_resized = 0
 
         # Flag for whether or not to go to the image chooser
         self.continue_selected = False
         self.resize_all_selected = False
 
-    def set_source_folder(self, source_folder):
+    def set_source_path(self, source_path):
         # Add code to validate path
-        self.source_folder = source_folder
-        self._load_image_file_paths_list()
+        self.source_path = source_path
 
-    def set_destination_folder(self, destination_folder):
+    def set_destination_path(self, destination_path):
         # Add code to validate path
-        self.destination_folder = destination_folder
+        self.destination_path = destination_path
 
     def set_thumbnail_size(self, size):
         '''
@@ -78,53 +81,52 @@ class JuReData():
         '''
         self.thumbnail_size = size
 
-    def set_continue_selected(self, val = True):
-        self.continue_selected = val
+    # # Do I really need getters and setters?
+    # # I guess for the stuff that NEEDS to be get/set at some point?
+    # def set_continue_selected(self, val = True):
+    #     self.continue_selected = val
 
-    def set_resize_all_selected(self, val = True):
-        self.resize_all_selected = val
+    # def set_resize_all_selected(self, val = True):
+    #     self.resize_all_selected = val
 
     def set_resize_percentage(self, percentage):
         for i in self.jure_image_list:
             i.resize_percentage = percentage
 
-    def _load_image_file_paths_list(self):
-        for f in listdir(self.source_folder):
-            if isfile(join(self.source_folder, f)):
+    def load_file_names_list(self):
+        for f in listdir(self.source_path):
+            if isfile(join(self.source_path, f)):
                 # TODO: Validate that these are image files!!
-                self.image_file_paths_list.append(join(self.source_folder, f))
-        
-        self.num_images = len(self.image_file_paths_list)
+                self.file_names_list.append(f)
+        self.num_file_names = len(self.file_names_list)
 
-    def _load_jure_image_list(self):
+    def load_jure_image_list(self):
         '''
         This function creates all instances of JuReImage at once before returning.
-        Ideally there needs to be a function that does one-at-a-time, or otherwise
-        yields to the caller, so that I can implement a progress bar in the view.
         '''
-        for p in self.image_file_paths_list:
-            self.jure_image_list.append(JuReImage(p, self.thumbnail_size, self.destination_folder))
+        for f in self.file_names_list:
+            self.jure_image_list.append(JuReImage(f, self.source_path, self.destination_path, self.thumbnail_size, resize_percentage = self.resize_percentage))
 
-    def _load_next_jure_image(self):
+    def load_next_jure_image(self):
         '''
         This function instances a JuReImage of the next unprocessed file,
         and returns how many files total have been processed. This allows for informing
-        a progress bar how much work has been done without resorting to threading.
+        a progress bar how much work has been done..
         '''
         index = self.num_jure_images_processed
-        self.jure_image_list.append(JuReImage(self.image_file_paths_list[index], self.thumbnail_size, self.destination_folder))
-        if self.num_jure_images_processed < self.num_images - 1:
+        self.jure_image_list.append(JuReImage(self.file_names_list[index], self.source_path, self.destination_path, self.thumbnail_size, resize_percentage = self.resize_percentage))
+        if self.num_jure_images_processed < self.num_file_names - 1:
             self.num_jure_images_processed += 1
         return self.num_jure_images_processed
 
-    def _resize_jure_image_list(self):
+    def resize_all(self):
         for p in self.jure_image_list:
             p.resize()
 
-    def _resize_next_jure_image(self):
+    def resize_next(self):
         index = self.num_jure_images_resized
         self.jure_image_list[index].resize()
-        if self.num_jure_images_resized < self.num_images - 1:
+        if self.num_jure_images_resized < len(self.jure_image_list) - 1:
             self.num_jure_images_resized += 1
         return self.num_jure_images_resized
 
@@ -138,12 +140,3 @@ if __name__ == '__main__':
 
     source_folder = filedialog.askdirectory()
     destination_folder = filedialog.askdirectory()
-
-    jure_data.set_source_folder(source_folder)
-    jure_data.set_destination_folder(destination_folder)
-    jure_data._load_image_file_paths_list()
-    jure_data._load_jure_image_list()
-
-    for r in jure_data.jure_image_list:
-        print(r.image_file_path)
-        r.resize()
