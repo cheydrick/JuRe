@@ -8,32 +8,34 @@ class JuReImage():
     for one image, along with other flags, such as whether or not
     the image is flagged for resizing.
     '''
-    def __init__(self, image_file_path, thumbnail_size, destination_folder, create_thumbnail = False, resize_percentage = 25):
-        self.image_file_path = image_file_path
+    def __init__(self, file_name, source_path, destination_path, thumbnail_size, create_thumbnail = False, resize_percentage = 25):
+        self.file_name = file_name
+        self.source_path = source_path
+        self.destination_path = destination_path
         self.thumbnail_size = thumbnail_size
-        self.resize_flag = False
-        self.image_thumbnail = None
         self.create_thumbnail = create_thumbnail
         self.resize_percentage = resize_percentage
-        self.destination_folder = destination_folder
+
+        self.resize_flag = False
+        self.image_thumbnail = None
 
         if self.create_thumbnail:
             self._create_thumbnail_from_file_path()
 
-        print("Created JureImage {}".format(self.image_file_path))
+        #print("Created JureImage {}".format(self.source_path + self.file_name))
 
     def _create_thumbnail_from_file_path(self):
-        self.image_thumbnail = Image.open(self.image_file_path).thumbnail(self.thumbnail_size)
+        self.image_thumbnail = Image.open(self.source_path + self.file_name).thumbnail(self.thumbnail_size)
 
     def resize(self):
-        tmp_image = Image.open(self.image_file_path)
+        tmp_image = Image.open(self.source_path + self.file_name)
         new_width = int(tmp_image.width * (self.resize_percentage / 100))
         new_height = int(tmp_image.height * (self.resize_percentage / 100))
         tmp_image.resize((new_width, new_height))
-        file_name, ext = splitext(self.image_file_path)
-        resize_file_path = file_name + '_resized.jpg'
-        print("Resizing: {} to {} at {} percent ({},{} to {},{}).".format(self.image_file_path, resize_file_path, self.resize_percentage, tmp_image.width, tmp_image.height, new_width, new_height))
-        tmp_image.save(resize_file_path)
+        file_name_no_extension = self.file_name.split('.')[0]
+        full_resize_file_path = self.destination_path + file_name_no_extension + '_resized.jpg'
+        #print("Resizing: {} to {} at {} percent ({},{} to {},{}).".format(self.source_path + self.file_name, full_resize_file_path, self.resize_percentage, tmp_image.width, tmp_image.height, new_width, new_height))
+        tmp_image.save(full_resize_file_path)
         
 
 class JuReData():
