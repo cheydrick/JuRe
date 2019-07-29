@@ -19,6 +19,9 @@ class JuReController():
         self.jure_view.set_destination_path_callback = self.set_destination_path
         self.jure_view.resize_all_callback = self.resize_all
 
+        # Default resize percentage
+        self.jure_view.set_resize_percentage(25)
+
     def set_source_path(self):
         self.jure_data.set_source_path(self.jure_view.get_source_path())
 
