@@ -7,7 +7,7 @@ class JuReImage():
     A JuReImage instance stores the file path and optionall a thumbnail
     for one image, along with a resizing flag.
     '''
-    def __init__(self, file_name, source_path, destination_path, thumbnail_size, create_thumbnail = False, resize_percentage = 25):
+    def __init__(self, file_name, source_path, destination_path, thumbnail_size, create_thumbnail = False, resize_percentage = 25, resize_flag = False):
         self.file_name = file_name
         self.source_path = source_path
         self.destination_path = destination_path
@@ -15,7 +15,7 @@ class JuReImage():
         self.create_thumbnail = create_thumbnail
         self.resize_percentage = resize_percentage
 
-        self.resize_flag = False
+        self.resize_flag = resize_flag
         self.image_thumbnail = None
 
         if self.create_thumbnail:
@@ -93,6 +93,10 @@ class JuReData():
         for i in self.jure_image_list:
             i.resize_percentage = percentage
 
+    def set_all_jure_image_resize_flag(self, flag):
+        for i in self.jure_image_list:
+            i.set_resize_flag(flag)        
+
     def load_file_names_list(self):
         for f in listdir(self.source_path):
             if isfile(join(self.source_path, f)):
@@ -100,7 +104,7 @@ class JuReData():
                 self.file_names_list.append(f)
         self.num_file_names = len(self.file_names_list)
 
-    def load_jure_image_list(self):
+    def load_all_jure_images(self):
         '''
         Creates all instances of JuReImage at once before returning.
         '''
@@ -146,14 +150,18 @@ if __name__ == '__main__':
     '''
     Test code, if this module is run on its own.
     '''
-    from tkinter import filedialog
+    source_path = "C:\\Users\\chris\\Code\\JuRe\\Photos2\\"
+    destination_path = "C:\\Users\\chris\\Code\\JuRe\\Resized\\"
 
-    #jure_data = JuReData()
+    #jure_image = JuReImage("TESTPICTURE.jpg", source_path, destination_path, (120,120), resize_percentage = 10)
+    #jure_image.set_resize_flag(True)
+    #jure_image.resize()
 
-    source_path = "C:\\Users\\chris\\Code\\JuRe\\Photos2\\" # filedialog.askdirectory()
-    destination_path = "C:\\Users\\chris\\Code\\JuRe\\Resized\\" #filedialog.askdirectory()
-
-    jure_image = JuReImage("TESTPICTURE.jpg", source_path, destination_path, (120,120), resize_percentage = 10)
-    jure_image.set_resize_flag(True)
-    jure_image.resize()
-
+    jure_data = JuReData()
+    jure_data.set_source_path(source_path)
+    jure_data.set_destination_path(destination_path)
+    jure_data.set_resize_percentage(10)
+    jure_data.load_file_names_list()
+    jure_data.load_all_jure_images()
+    jure_data.set_all_jure_image_resize_flag(True)
+    jure_data.resize_all()
