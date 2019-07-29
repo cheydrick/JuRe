@@ -8,7 +8,7 @@ JuRe Just Resizes! Choose a folder of images, and choose folder for the resized 
 - Progress bar needs to be brought into main view class
 - UI prettification, as much as tkinter allows...
 - Consistenly create and use getters/setters for things that need to be get/set
-- Persistant settings
+- Persistent settings
 - UI feedback where source and destination folder are set to
 - Figure out which Pillow resizing algorithm is best (currently nearest neighbor)
 - Long term: create image viewer/chooser UI for flagging images for resizing
