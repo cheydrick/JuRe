@@ -52,7 +52,6 @@ class JuReData():
         # JureImage class instance list
         self.jure_image_list = []
         # Number of JureImage instances in jure_image_list
-        self.num_jure_images = 0
 
         # Thumbnail options
         self.thumbnail_size = 128, 128
@@ -125,6 +124,9 @@ class JuReData():
             self.num_jure_images_created += 1
         return self.num_jure_images_created
 
+    def get_num_jure_images(self):
+        return len(self.jure_image_list)
+        
     def resize_all(self):
         '''
         Resizes all JuReImages at once before returning.

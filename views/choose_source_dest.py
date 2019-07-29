@@ -69,9 +69,9 @@ class JuReMainWindow(Frame):
         self.root = root
         super().__init__()
 
-        self.set_source_path_callback = None
-        self.set_destination_path_callback = None
-        self.resize_all_callback = None
+        self.set_source_path_callback = lambda: len([])
+        self.set_destination_path_callback = lambda: len([])
+        self.resize_all_callback = lambda: len([])
 
         self.source_path = ""
         self.destination_path = ""
@@ -100,19 +100,21 @@ class JuReMainWindow(Frame):
         return int(self.resize_percent_entry_var.get())
 
     def get_source_path(self):
-        return self.source_path
+        return self.source_path + '/'
 
     def get_destination_path(self):
-        return self.destination_path
+        return self.destination_path + '/'
         
     def set_source_path_button_clicked(self):
         self.source_path = filedialog.askdirectory()
+        self.set_source_path_callback()
 
     def set_destination_path_button_clicked(self):
         self.destination_path = filedialog.askdirectory()
+        self.set_destination_path_callback()
 
     def resize_all_button_clicked(self):
-        pass
+        self.resize_all_callback()
     
 
 if __name__ == '__main__':

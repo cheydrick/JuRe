@@ -2,17 +2,13 @@ from tkinter import Tk, Frame
 from tkinter.ttk import Progressbar
 from math import floor
 
-# This is sloppy, fix it.
-
 class ResizeImagesProgressView(Frame):
-    def __init__(self, root, max):
+    def __init__(self, root):
         super().__init__()
         self.root = root
         self.progress_bar = Progressbar(self, orient = "horizontal", length = 200, mode = "determinate")
-        self.progress_bar['maximum'] = max
-        
-        # Override this function. It should be a function that returns
-        # a value from 0-100.
+        self.progress_bar['maximum'] = 1000
+
         self.on_timer_function = lambda: len([])
 
         self.running = False
@@ -22,16 +18,21 @@ class ResizeImagesProgressView(Frame):
         self.progress_bar.pack()
         self.pack()
 
+    def set_progress_bar_max(self, max):
+        self.progress_bar['maximum'] = max
+
+    def set_max_runs(self, max):
+        self.max_runs = max
+
     def on_timer(self):
-        if self.running:
+        print(self.current_runs)
+        print(self.max_runs)
+        if self.current_runs < self.max_runs:
             value = self.on_timer_function()
             self.progress_bar['value'] = value
+            self.current_runs += 1
             self.after(1, self.on_timer)
 
-    def start_timer(self, max_runs):
-        self.running = True
-        self.max_runs = max_runs
+    def start_timer(self):
+        self.progress_bar['value'] = 0
         self.on_timer()
-
-    def stop_timer(self):
-        self.running = False
