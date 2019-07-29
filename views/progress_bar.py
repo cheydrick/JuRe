@@ -25,8 +25,6 @@ class ResizeImagesProgressView(Frame):
         self.max_runs = max
 
     def on_timer(self):
-        print(self.current_runs)
-        print(self.max_runs)
         if self.current_runs < self.max_runs:
             value = self.on_timer_function()
             self.progress_bar['value'] = value
