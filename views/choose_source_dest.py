@@ -73,6 +73,8 @@ class JuReMainWindow(Frame):
         self.set_destination_path_callback = None
         self.resize_all_callback = None
 
+        self.source_path = ""
+        self.destination_path = ""
         self.init_view()
 
     def init_view(self):
@@ -97,11 +99,17 @@ class JuReMainWindow(Frame):
     def get_resize_percentage(self):
         return int(self.resize_percent_entry_var.get())
 
+    def get_source_path(self):
+        return self.source_path
+
+    def get_destination_path(self):
+        return self.destination_path
+        
     def set_source_path_button_clicked(self):
-        pass
+        self.source_path = filedialog.askdirectory()
 
     def set_destination_path_button_clicked(self):
-        pass
+        self.destination_path = filedialog.askdirectory()
 
     def resize_all_button_clicked(self):
         pass
