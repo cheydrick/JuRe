@@ -4,9 +4,8 @@ from os.path import isfile, join, splitext
 
 class JuReImage():
     '''
-    A JuReImage instance stores the file path and thumbnail
-    for one image, along with other flags, such as whether or not
-    the image is flagged for resizing.
+    A JuReImage instance stores the file path and optionall a thumbnail
+    for one image, along with a resizing flag.
     '''
     def __init__(self, file_name, source_path, destination_path, thumbnail_size, create_thumbnail = False, resize_percentage = 25):
         self.file_name = file_name
@@ -22,53 +21,60 @@ class JuReImage():
         if self.create_thumbnail:
             self._create_thumbnail_from_file_path()
 
-        #print("Created JureImage {}".format(self.source_path + self.file_name))
-
     def _create_thumbnail_from_file_path(self):
         self.image_thumbnail = Image.open(self.source_path + self.file_name).thumbnail(self.thumbnail_size)
 
+    def set_resize_flag(self, flag):
+        self.resize_flag = flag
+
     def resize(self):
-        tmp_image = Image.open(self.source_path + self.file_name)
-        new_width = int(tmp_image.width * (self.resize_percentage / 100))
-        new_height = int(tmp_image.height * (self.resize_percentage / 100))
-        tmp_image = tmp_image.resize((new_width, new_height))
-        file_name_no_extension = self.file_name.split('.')[0]
-        full_resize_file_path = self.destination_path + file_name_no_extension + '_resized.jpg'
-        tmp_image.save(full_resize_file_path)
+        if self.resize_flag:
+            tmp_image = Image.open(self.source_path + self.file_name)
+            new_width = int(tmp_image.width * (self.resize_percentage / 100))
+            new_height = int(tmp_image.height * (self.resize_percentage / 100))
+            tmp_image = tmp_image.resize((new_width, new_height))
+            file_name_no_extension = self.file_name.split('.')[0]
+            full_resize_file_path = self.destination_path + file_name_no_extension + '_resized.jpg'
+            tmp_image.save(full_resize_file_path)
         
 
 class JuReData():
     def __init__(self):
-        # Folders
+        # Image source and resized image destination paths
         self.source_path = None
         self.destination_path = None
+        
+        # List of file names
         self.file_names_list = []
+        # Number of file names in file_names_list
+        self.num_file_names = 0
 
         # JureImage class instance list
         self.jure_image_list = []
+        # Number of JureImage instances in jure_image_list
+        self.num_jure_images = 0
 
         # Thumbnail options
         self.thumbnail_size = 128, 128
+
+        # Resize percentage
         self.resize_percentage = 25
 
-        self.num_file_names = 0
-        # Total number of JureImage instances in jure_image_list
-        self.num_jure_images = 0
         # Number of JureImage instances created (for progress bar)
-        self.num_jure_images_processed = 0
+        self.num_jure_images_created = 0
         # Number of JureImage instances resized (for progress bar)
         self.num_jure_images_resized = 0
 
         # Flag for whether or not to go to the image chooser
         self.continue_selected = False
+
+        # Flag for whether or not to resize all
         self.resize_all_selected = False
 
     def set_source_path(self, source_path):
-        # Add code to validate path
         self.source_path = source_path
 
     def set_destination_path(self, destination_path):
-        # Add code to validate path
         self.destination_path = destination_path
 
     def set_thumbnail_size(self, size):
@@ -78,15 +84,12 @@ class JuReData():
         '''
         self.thumbnail_size = size
 
-    # # Do I really need getters and setters?
-    # # I guess for the stuff that NEEDS to be get/set at some point?
-    # def set_continue_selected(self, val = True):
-    #     self.continue_selected = val
-
-    # def set_resize_all_selected(self, val = True):
-    #     self.resize_all_selected = val
-
     def set_resize_percentage(self, percentage):
+        '''
+        Sets JuReData resize percentage, AND sets resize percentage
+        for all instanced JuReImages. Should it do both?
+        '''
+        self.resize = percentage
         for i in self.jure_image_list:
             i.resize_percentage = percentage
 
@@ -99,28 +102,40 @@ class JuReData():
 
     def load_jure_image_list(self):
         '''
-        This function creates all instances of JuReImage at once before returning.
+        Creates all instances of JuReImage at once before returning.
         '''
         for f in self.file_names_list:
             self.jure_image_list.append(JuReImage(f, self.source_path, self.destination_path, self.thumbnail_size, resize_percentage = self.resize_percentage))
+        self.num_jure_images_created = len(self.jure_image_list)
+        return self.num_jure_images_created
 
     def load_next_jure_image(self):
         '''
         This function instances a JuReImage of the next unprocessed file,
         and returns how many files total have been processed. This allows for informing
-        a progress bar how much work has been done..
+        a progress bar how much work has been done.
         '''
-        index = self.num_jure_images_processed
+        index = self.num_jure_images_created
         self.jure_image_list.append(JuReImage(self.file_names_list[index], self.source_path, self.destination_path, self.thumbnail_size, resize_percentage = self.resize_percentage))
-        if self.num_jure_images_processed < self.num_file_names - 1:
-            self.num_jure_images_processed += 1
-        return self.num_jure_images_processed
+        if self.num_jure_images_created < self.num_file_names - 1:
+            self.num_jure_images_created += 1
+        return self.num_jure_images_created
 
     def resize_all(self):
+        '''
+        Resizes all JuReImages at once before returning.
+        '''
         for p in self.jure_image_list:
             p.resize()
+        self.num_jure_images_resized = len(self.jure_image_list)
+        return self.num_jure_images_resized
 
     def resize_next(self):
+        '''
+        This function resizes the next unresized JuReImage,
+        and returns how many in total have been resized. This allows for informing
+        a progress bar how much work has been done.
+        '''
         index = self.num_jure_images_resized
         self.jure_image_list[index].resize()
         if self.num_jure_images_resized < len(self.jure_image_list) - 1:
@@ -139,5 +154,6 @@ if __name__ == '__main__':
     destination_path = "C:\\Users\\chris\\Code\\JuRe\\Resized\\" #filedialog.askdirectory()
 
     jure_image = JuReImage("TESTPICTURE.jpg", source_path, destination_path, (120,120), resize_percentage = 10)
+    jure_image.set_resize_flag(True)
     jure_image.resize()
 
