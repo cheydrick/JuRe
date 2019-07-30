@@ -1,6 +1,5 @@
 from .jure_data import JuReData
-from views.choose_source_dest import JuReMainWindow
-from views.progress_bar import ResizeImagesProgressView
+from views import JuReMainWindow, ResizeImagesProgressView
 from tkinter import Tk
 
 class JuReController():
