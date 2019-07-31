@@ -2,6 +2,12 @@ from .jure_data import JuReData
 from views import JuReMainWindow, ResizeImagesProgressView
 from tkinter import Tk
 
+def is_valid_path(path):
+    pass
+
+def is_valid_percentage(val):
+    pass
+
 class JuReController():
     def __init__(self):
         self.root = Tk()
